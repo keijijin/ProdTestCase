@@ -3,6 +3,7 @@ package com.myteam.sample;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -41,11 +42,17 @@ public class ProduceTestCase {
 
 		for (RuleInfo ruleInfo : conditionColumns.values()) {
 			Map<String, List<String>> map = ruleInfo.getMap();
-			logger.log(Level.INFO, map);
-						
+			//logger.log(Level.INFO, map);
+			List<List<String>> vars = new ArrayList<List<String>>();
+			ruleInfo.getConditionColumns().forEach(nKey -> {
+				vars.add(map.get(nKey.toString()));
+			});
+			
+			logger.log(Level.INFO, casecount(vars));
+			
 			List<Supplier<Stream<String>>> list = new ArrayList<Supplier<Stream<String>>>();
 
-			map.values().stream().forEach(l -> {
+			vars.stream().forEach(l -> {
 				list.add(()->l.stream());
 			});
 			res.put(ruleInfo.getRuleName(), new ArrayList<List<String>>());
@@ -61,7 +68,8 @@ public class ProduceTestCase {
 	        	try {
 					ExecutionResults results = KieServerRestClient.executeCommands(container_id, session_id);
 					power = (Power) results.getValue(id);
-					logger.log(Level.INFO, powercsv);
+					//System.out.println(powercsv);
+					//logger.log(Level.INFO, powercsv);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -85,5 +93,13 @@ public class ProduceTestCase {
 	private static void setMembers(Power power, List<String>fact) {
 		if (fact.size() >= 1 && !fact.get(0).equals("")) power.setContract(fact.get(0));
 		if (fact.size() >= 2 && !fact.get(1).equals("")) power.setWat(Double.parseDouble(fact.get(1)));
+	}
+	
+	public static BigDecimal casecount(List<List<String>> list) {
+		BigDecimal bd = new BigDecimal(1);
+		for (int n = 0; n < list.size(); n++) {
+			bd = bd.multiply(BigDecimal.valueOf((long)list.get(n).size()));
+		}
+		return bd;
 	}
 }

@@ -76,7 +76,7 @@ public class DTable {
 						ruleInfo.getConditionColumns().add(n);
 						conditionColumns.put(ruleTableName, ruleInfo);
 						ruleInfo.setStartRow(i + 4);
-						ruleInfo.setLastRow(sheet.getLastRowNum()-1);
+						ruleInfo.setLastRow(sheet.getLastRowNum());
 					}
 				}
 			}
